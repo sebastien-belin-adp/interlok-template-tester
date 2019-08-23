@@ -1,0 +1,9 @@
+ <producer class="standard-http-producer">
+   <unique-id>standard-http-producer</unique-id>
+   <method-provider class="http-configured-request-method">
+     <method wizard-key="request.method" wizard-desc="Request method" wizard-step="request" wizard-order="2" wizard-type="string"></method>
+   </method-provider>
+   <content-type-provider class="http-null-content-type-provider"/>
+   <response-header-handler class="http-response-headers-as-metadata"/>
+   <request-header-provider class="http-no-request-headers"/>
+ </producer>
