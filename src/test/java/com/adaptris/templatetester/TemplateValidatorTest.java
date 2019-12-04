@@ -30,8 +30,7 @@ public class TemplateValidatorTest {
         errors);
 
     Assertions.assertFalse(errors.isEmpty());
-    Assertions.assertEquals("com.thoughtworks.xstream.mapper.CannotResolveClassException: invalid-adapter",
-        errors.get("adapters/invalid-adapter.xml"));
+    Assertions.assertEquals("invalid-adapter", errors.get("adapters/invalid-adapter.xml"));
   }
 
   @Test
@@ -53,7 +52,6 @@ public class TemplateValidatorTest {
 
     Assertions.assertFalse(errors.isEmpty());
     String error = errors.get("producers/standard-http-producer.xml");
-    Assertions.assertTrue(error.contains("com.thoughtworks.xstream.converters.ConversionException:"));
     Assertions.assertTrue(error.contains("---- Debugging information ----"));
     Assertions.assertTrue(error.contains("path                : /producer/method-provider/method"));
   }

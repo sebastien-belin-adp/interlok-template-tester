@@ -26,7 +26,7 @@ public class MarshallerHelperTest {
   public void testValidateXmlInvalid() throws URISyntaxException {
     String error = new MarshallerHelper().validateXml(getResourceFile("adapters/invalid-adapter.xml"));
 
-    Assertions.assertEquals("com.thoughtworks.xstream.mapper.CannotResolveClassException: invalid-adapter", error);
+    Assertions.assertEquals("invalid-adapter", error);
   }
 
   @Test
