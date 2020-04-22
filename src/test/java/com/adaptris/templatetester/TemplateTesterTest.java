@@ -1,5 +1,7 @@
 package com.adaptris.templatetester;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -10,9 +12,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import com.adaptris.core.CoreException;
 
@@ -37,12 +42,36 @@ public class TemplateTesterTest {
   }
 
   @Test
-  public void testTemplates() throws CoreException, IOException, URISyntaxException {
-    Map<String, String> errors = new HashMap<>();
+  public void testHasTemplates() throws CoreException, IOException, URISyntaxException {
+    long count = Files.walk(Paths.get(interlokTemplatesDir.toURI())).count();
 
-    Files.walk(Paths.get(interlokTemplatesDir.toURI())).filter(FileType::isXml).forEach(jar -> validateTemplate(jar, errors));
+    assertTrue(count > 0);
+  }
 
-    assertNoError(errors);
+  /**
+   * Run through all the templates in interlok-templates and validate them
+   *
+   * @throws CoreException
+   * @throws IOException
+   * @throws URISyntaxException
+   */
+  @TestFactory
+  public Stream<DynamicTest> dynamicTestTemplates() throws IOException, URISyntaxException {
+    return Files.walk(Paths.get(interlokTemplatesDir.toURI())).filter(FileType::isXml).map(path -> createDynamicTest(path));
+  }
+
+  private DynamicTest createDynamicTest(Path path) {
+    int nameCount = path.getNameCount();
+    String subpath = path.subpath(nameCount - Math.min(nameCount, 2), nameCount).toString().replaceAll("\\\\", "/");
+
+    return DynamicTest.dynamicTest(subpath, () -> {
+      Map<String, String> errors = new HashMap<>();
+
+      validateTemplate(path, errors);
+
+      assertNoError(errors);
+    });
+
   }
 
   private void validateTemplate(Path path, Map<String, String> errors) {

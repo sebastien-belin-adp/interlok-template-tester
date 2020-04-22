@@ -3,13 +3,13 @@ plugins {
   id 'maven'
   id 'maven-publish'
   id 'jacoco'
-  id 'com.github.spotbugs' version '2.0.1'
-  id 'de.undercouch.download' version '4.0.0'
+  id 'com.github.spotbugs' version '3.0.0'
+  id 'de.undercouch.download' version '4.0.4'
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.9-SNAPSHOT'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.10-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.10-SNAPSHOT'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -20,12 +20,13 @@ ext {
   interlokTemplateZipUrl = 'https://github.com/adaptris/interlok-templates/archive/master.zip'
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
-  interlokCommonJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
-  componentName='Interlok/Okta'
+  interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
+  componentName='Interlok Template Tester'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  log4j2Version="2.12.1"
+  slf4jVersion = '1.7.30'
   junitJupiterVersion = '5.5.1'
+  mockitoVersion = '3.3.3'
   sonicVersion = '8.5.0'
 }
 
@@ -35,6 +36,24 @@ if (JavaVersion.current().isJava8Compatible()) {
       options.addStringOption('Xdoclint:none', '-quiet')
     }
   }
+}
+ext.gitBranchNameOrTimestamp = { branchName ->
+  if (branchName.equals("HEAD") || branchName.equals("develop") || branchName.startsWith("release")) {
+    return new Date().format('HH:mm:ss z');
+  }
+  return branchName;
+}
+
+ext.buildInfo = { ->
+   new ByteArrayOutputStream().withStream { os ->
+      exec {
+        executable = "git"
+        args = ["rev-parse", "--abbrev-ref", "HEAD"]
+        standardOutput = os
+      }
+      def branchName = os.toString().replaceAll("\r", "").replaceAll("\n", "").trim();
+      return gitBranchNameOrTimestamp(branchName);
+    }
 }
 
 sourceCompatibility = 1.8
@@ -79,6 +98,8 @@ dependencies {
   compile  ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
   compile  ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   
+  compile ("org.slf4j:slf4j-api:$slf4jVersion")
+  
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   
   testCompile ("com.adaptris:interlok-oauth-azure:$interlokCoreVersion") {changing= true}
@@ -101,15 +122,12 @@ dependencies {
   testCompile  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-  testCompile  ("org.junit.platform:junit-platform-launcher:1.5.1")
+  testCompile  ("org.junit.platform:junit-platform-launcher:1.6.2")
   
   testCompile  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
-  
-  testCompile  ("org.apache.logging.log4j:log4j-core:$log4j2Version")
-  testCompile  ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
-  testCompile  ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  
-  testCompile  ("org.mockito:mockito-all:1.10.19")
+   
+  testCompile ("org.mockito:mockito-core:$mockitoVersion")
+  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
@@ -141,17 +159,18 @@ task generateVersion {
     versionFile.getParentFile().mkdirs()
     ant.propertyfile(file: versionFile) {
       entry(key: 'component.name', value: componentName)
-      entry(key: 'build.version', value: releaseVersion)
-      entry(key: 'groupId', value: "com.adaptris")
+      entry(key: 'groupId', value: project.group)
       entry(key: 'artifactId', value: project.name)
+      entry(key: 'build.version', value: project.version)
       entry(key: 'build.date', value: new Date().format('yyyy-MM-dd'))
+      entry(key: 'build.info', value: buildInfo())
     }
   }
 }
 
 task offlinePackageList(type: Copy) {
   description 'Build an offline package-list for javadocs'
-  group 'documentation'
+  group 'Documentation'
 
   project.configurations.offlineJavadocPackages.collect { dependency ->
     from(zipTree(dependency)) {
@@ -174,10 +193,6 @@ javadoc {
 
 test {
   useJUnitPlatform()
-}
-
-jacoco {
-  toolVersion="0.8.3"
 }
 
 jacocoTestReport {
@@ -224,7 +239,7 @@ publishing {
   }
 }
 
-spotbugs {
+spotbugsMain {
   // showProgress = "true"
   effort = "max"
   // Ignore failures?
@@ -232,18 +247,18 @@ spotbugs {
 
   // We only care about "high priority" issues...
   reportLevel = "high"
+  reports {
+    xml {
+      enabled = false
+    }
+    html {
+      enabled = true
+    }
+  }
 }
 
 // disable spotbugsTests which checks our test code..
 spotbugsTest.enabled = false
-
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
-  reports {
-    xml.enabled = false
-    html.enabled = true
-  }
-}
-
 
 task deleteGeneratedFiles(type: Delete) {
   delete 'activemq-data'

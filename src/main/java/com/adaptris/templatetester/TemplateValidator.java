@@ -22,6 +22,12 @@ public class TemplateValidator {
     this.valuesToModify.putAll(valuesToModify);
   }
 
+  /**
+   * Validate the template at the given path. If there is any error they will be added to the errors map
+   *
+   * @param path
+   * @param errors
+   */
   public final void validateTemplate(Path path, Map<String, String> errors) {
     int nameCount = path.getNameCount();
     String subpath = path.subpath(nameCount - Math.min(nameCount, 2), nameCount).toString().replaceAll("\\\\", "/");
@@ -43,6 +49,7 @@ public class TemplateValidator {
     }
   }
 
+  // Some templates need some modification in order to be unmarshalled
   private Path modifyXml(Path path, String subpath) throws Exception {
     if (valuesToModify.containsKey(subpath)) {
       XmlUtils xmlUtils = new XmlUtils();
