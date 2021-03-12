@@ -9,7 +9,7 @@ import com.adaptris.core.util.Args;
 
 public class MarshallerHelper {
 
-  private AdaptrisMarshaller defaultMarshaller = DefaultMarshaller.getDefaultMarshaller();
+  private final AdaptrisMarshaller defaultMarshaller = DefaultMarshaller.getDefaultMarshaller();
 
   public final String validateXml(File file) {
     String errorMessage = null;

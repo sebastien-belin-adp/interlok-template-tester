@@ -1,5 +1,9 @@
 package com.adaptris.templatetester;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TemplateValidatorTest {
@@ -19,7 +22,7 @@ public class TemplateValidatorTest {
     new TemplateValidator(Collections.emptyList(), Collections.emptyMap()).validateTemplate(getResourcePath("adapters/adapter.xml"),
         errors);
 
-    Assertions.assertTrue(errors.isEmpty());
+    assertTrue(errors.isEmpty());
   }
 
   @Test
@@ -29,8 +32,8 @@ public class TemplateValidatorTest {
     new TemplateValidator(Collections.emptyList(), Collections.emptyMap()).validateTemplate(getResourcePath("adapters/invalid-adapter.xml"),
         errors);
 
-    Assertions.assertFalse(errors.isEmpty());
-    Assertions.assertEquals("invalid-adapter", errors.get("adapters/invalid-adapter.xml"));
+    assertFalse(errors.isEmpty());
+    assertEquals("invalid-adapter", errors.get("adapters/invalid-adapter.xml"));
   }
 
   @Test
@@ -40,7 +43,7 @@ public class TemplateValidatorTest {
     new TemplateValidator(Collections.singletonList("adapters/invalid-adapter.xml"), Collections.emptyMap())
     .validateTemplate(getResourcePath("adapters/invalid-adapter.xml"), errors);
 
-    Assertions.assertTrue(errors.isEmpty());
+    assertTrue(errors.isEmpty());
   }
 
   @Test
@@ -50,10 +53,10 @@ public class TemplateValidatorTest {
     new TemplateValidator(Collections.emptyList(), Collections.emptyMap())
     .validateTemplate(getResourcePath("producers/standard-http-producer.xml"), errors);
 
-    Assertions.assertFalse(errors.isEmpty());
+    assertFalse(errors.isEmpty());
     String error = errors.get("producers/standard-http-producer.xml");
-    Assertions.assertTrue(error.contains("---- Debugging information ----"));
-    Assertions.assertTrue(error.contains("path                : /producer/method-provider/method"));
+    assertTrue(error.contains("---- Debugging information ----"));
+    assertTrue(error.contains("path                : /producer/method-provider/method"));
   }
 
   @Test
@@ -65,7 +68,7 @@ public class TemplateValidatorTest {
     new TemplateValidator(Collections.emptyList(), valuesToModify)
     .validateTemplate(getResourcePath("producers/standard-http-producer.xml"), errors);
 
-    Assertions.assertTrue(errors.isEmpty());
+    assertTrue(errors.isEmpty());
   }
 
   private Path getResourcePath(String name) throws URISyntaxException {

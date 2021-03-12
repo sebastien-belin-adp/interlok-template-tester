@@ -1,5 +1,7 @@
 package com.adaptris.templatetester;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -7,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.adaptris.util.XmlUtils;
@@ -20,13 +21,13 @@ public class TemplateModifierTest {
     xmlUtils.setSource(Files.newInputStream(getResourcePath("producers/standard-http-producer.xml")));
 
     String method = xmlUtils.getSingleTextItem("/producer/method-provider/method");
-    Assertions.assertEquals("", method);
+    assertEquals("", method);
 
     TemplateModifier templateModifier = new TemplateModifier(xmlUtils);
     templateModifier.modifyXml(Collections.singletonMap("/producer/method-provider/method", "GET"));
 
     method = xmlUtils.getSingleTextItem("/producer/method-provider/method");
-    Assertions.assertEquals("GET", method);
+    assertEquals("GET", method);
   }
 
   @Test
@@ -35,13 +36,13 @@ public class TemplateModifierTest {
     xmlUtils.setSource(Files.newInputStream(getResourcePath("adapters/adapter.xml")));
 
     String method = xmlUtils.getSingleTextItem("/adapter/unique-id");
-    Assertions.assertEquals("adapter", method);
+    assertEquals("adapter", method);
 
     TemplateModifier templateModifier = new TemplateModifier(xmlUtils);
     templateModifier.modifyXml(Collections.singletonMap("/adapter/unique-id", null));
 
     method = xmlUtils.getSingleTextItem("/adapter/unique-id");
-    Assertions.assertEquals("", method);
+    assertEquals("", method);
   }
 
   @Test
@@ -50,13 +51,13 @@ public class TemplateModifierTest {
     xmlUtils.setSource(Files.newInputStream(getResourcePath("producers/standard-http-producer.xml")));
 
     String method = xmlUtils.getSingleTextItem("/xpath/doesnt/exist");
-    Assertions.assertEquals("", method);
+    assertEquals("", method);
 
     TemplateModifier templateModifier = new TemplateModifier(xmlUtils);
     templateModifier.modifyXml(Collections.singletonMap("/xpath/doesnt/exist", "GET"));
 
     method = xmlUtils.getSingleTextItem("/xpath/doesnt/exist");
-    Assertions.assertEquals("", method);
+    assertEquals("", method);
   }
 
   private Path getResourcePath(String name) throws URISyntaxException {

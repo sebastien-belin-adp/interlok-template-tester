@@ -3,13 +3,13 @@ plugins {
   id 'maven'
   id 'maven-publish'
   id 'jacoco'
-  id 'com.github.spotbugs' version '3.0.0'
+  id 'com.github.spotbugs' version '4.7.0'
   id 'de.undercouch.download' version '4.0.4'
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.12-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.12-SNAPSHOT'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '4.0-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '4.0-SNAPSHOT'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -25,8 +25,8 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
-  junitJupiterVersion = '5.5.1'
-  mockitoVersion = '3.3.3'
+  junitJupiterVersion = '5.7.1'
+  mockitoVersion = '3.8.0'
   sonicVersion = '8.5.0'
 }
 
@@ -56,7 +56,7 @@ ext.buildInfo = { ->
     }
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
@@ -78,7 +78,7 @@ repositories {
 
 configurations {
   javadoc {}
-  offlineJavadocPackages {}
+  mavenDeploy{}
   all*.exclude group: 'c3p0'
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'javamail'
@@ -88,6 +88,23 @@ configurations {
   all*.exclude group: 'net.sf.saxon', module: 'saxon'
   all*.exclude group: 'org.codehaus.woodstox'
   all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.mail.glassfish'
+  all*.exclude group: 'javax.el', module: 'javax.el-api'
+  all*.exclude group: 'org.hibernate', module: 'hibernate-validator'
+  // INTERLOK-3197 exclude old javax.mail
+  all*.exclude group: 'com.sun.mail', module: 'javax.mail'
+  all*.exclude group: 'javax.validation', module: 'validation-api'
+  all*.exclude group: 'javax.activation', module: 'activation'
+  all*.exclude group: 'javax.activation', module: 'javax.activation-api'
+
+  // INTERLOK-3740 switch from jcraft to com.github.mwiede jsch fork.
+  all*.exclude group: 'com.jcraft', module: 'jsch'
+
+  // module exclusions for java 11.
+  if (JavaVersion.current().ordinal() >= JavaVersion.VERSION_1_9.ordinal()) {
+    all*.exclude group: "xml-apis", module: "xml-apis"
+    all*.exclude group: "stax", module: "stax-api"
+    all*.exclude group: "org.apache.geronimo.specs", module: "geronimo-jta_1.1_spec"
+  }
 }
 
 configurations.all {
@@ -130,10 +147,6 @@ dependencies {
   testCompile ("org.mockito:mockito-inline:$mockitoVersion")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
-
-  offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
-  offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
-
 }
 
 jar {
@@ -168,26 +181,9 @@ task generateVersion {
   }
 }
 
-task offlinePackageList(type: Copy) {
-  description 'Build an offline package-list for javadocs'
-  group 'Documentation'
-
-  project.configurations.offlineJavadocPackages.collect { dependency ->
-    from(zipTree(dependency)) {
-      into dependency.name
-    }
-  }
-  include "package-list"
-  into offlineJavadocPackageDir
-}
-
 javadoc {
   configure(options) {
-    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
-    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
-    taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
-    options.addStringOption "tagletpath", configurations.javadoc.asPath
-    title= componentName
+    title = componentName
   }
 }
 
@@ -266,7 +262,6 @@ task deleteGeneratedFiles(type: Delete) {
 }
 
 
-javadoc.dependsOn offlinePackageList
 check.dependsOn jacocoTestReport
 clean.dependsOn deleteGeneratedFiles
 

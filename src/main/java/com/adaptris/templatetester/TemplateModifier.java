@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -59,7 +60,7 @@ public class TemplateModifier {
   }
 
   private boolean isNode(Node node) {
-    return Objects.nonNull(node) && Objects.nonNull(node.getNodeName());
+    return BooleanUtils.and(new boolean[] { Objects.nonNull(node), Objects.nonNull(node.getNodeName()) });
   }
 
 }

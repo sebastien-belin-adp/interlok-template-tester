@@ -1,6 +1,7 @@
 package com.adaptris.templatetester;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -82,7 +82,7 @@ public class TemplateTesterTest {
     if (!errors.isEmpty()) {
       String errorMessage = "There are " + errors.size() + " errors:" + System.lineSeparator()
       + errors.entrySet().stream().map(Object::toString).collect(Collectors.joining(System.lineSeparator()));
-      Assertions.fail(errorMessage);
+      fail(errorMessage);
     }
   }
 
