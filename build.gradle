@@ -127,6 +127,13 @@ dependencies {
   testCompile ("com.adaptris:interlok-mqtt:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xml-security:$interlokCoreVersion") {changing= true}
   
+  testCompile ("com.adaptris:interlok-solace:$interlokCoreVersion") {changing= true}
+  testCompile ("com.adaptris:interlok-webspheremq:$interlokCoreVersion") {changing= true}
+  testCompile ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") {changing= true}
+  testCompile ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") {changing= true}
+  testCompile ("com.adaptris:interlok-xa-wmq:$interlokCoreVersion") {changing= true}
+  testCompile ("com.adaptris:interlok-xa-atomikos:$interlokCoreVersion") {changing= true}
+  
   testCompile ("com.adaptris:interlok-jms-sonicmq:$interlokCoreVersion") {changing= true}
   testCompile ("com.aurea:sonic-channel:$sonicVersion")
   testCompile ("com.aurea:sonic-client:$sonicVersion")

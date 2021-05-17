@@ -38,6 +38,21 @@ public class TemplateTesterTest {
     // Null means that we will remove the xslt-wizard node
     valuesToModify.put("channels/soap-web-service.xml", Collections.singletonMap("/channel/xslt-wizard", null));
 
+    valuesToModify.put("adapters/solace-wmq.xml", Collections.singletonMap("/adapter/xslt-wizard", null));
+    valuesToModify.put("adapters/xa-solace-wmq.xml", Collections.singletonMap("/adapter/xslt-wizard", null));
+    valuesToModify.put("channels/solace-wmq.xml", Collections.singletonMap("/channel/xslt-wizard", null));
+    valuesToModify.put("channels/wmq-solace.xml", Collections.singletonMap("/channel/xslt-wizard", null));
+    valuesToModify.put("channels/xa-solace-wmq.xml", Collections.singletonMap("/channel/xslt-wizard", null));
+    valuesToModify.put("channels/xa-wmq-solace.xml", Collections.singletonMap("/channel/xslt-wizard", null));
+    valuesToModify.put("workflows/solace-wmq.xml", Collections.singletonMap("/standard-workflow/xslt-wizard", null));
+    valuesToModify.put("workflows/wmq-solace.xml", Collections.singletonMap("/standard-workflow/xslt-wizard", null));
+    valuesToModify.put("workflows/xa-solace-wmq.xml", Collections.singletonMap("/standard-workflow/xslt-wizard", null));
+    valuesToModify.put("workflows/xa-wmq-solace.xml", Collections.singletonMap("/standard-workflow/xslt-wizard", null));
+    valuesToModify.put("connections/solace.xml", Collections.singletonMap("/jms-connection/xslt-wizard", null));
+    valuesToModify.put("connections/wmq.xml", Collections.singletonMap("/jms-connection/xslt-wizard", null));
+    valuesToModify.put("connections/xa-solace.xml", Collections.singletonMap("xa-jms-connection/xslt-wizard", null));
+    valuesToModify.put("connections/xa-wmq.xml", Collections.singletonMap("/xa-jms-connection/xslt-wizard", null));
+
     templateValidator = new TemplateValidator(Collections.emptyList(), valuesToModify);
   }
 
