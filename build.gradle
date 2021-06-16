@@ -146,7 +146,7 @@ dependencies {
   testCompile  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-  testCompile  ("org.junit.platform:junit-platform-launcher:1.6.2")
+  testCompile  ("org.junit.platform:junit-platform-launcher:1.7.2")
 
   testCompile  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
 
