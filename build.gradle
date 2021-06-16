@@ -8,10 +8,10 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '4.0-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '4.0-SNAPSHOT'
-  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
-  mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ?: '4.1-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ?: '4.1-SNAPSHOT'
+  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
+  mavenPublishUrl = project.hasProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
   repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'unknown'
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
@@ -25,8 +25,8 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
-  junitJupiterVersion = '5.7.1'
-  mockitoVersion = '3.8.0'
+  junitJupiterVersion = '5.7.2'
+  mockitoVersion = '3.11.1'
   sonicVersion = '8.5.0'
 }
 
@@ -114,42 +114,42 @@ configurations.all {
 dependencies {
   compile  ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
   compile  ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
-  
+
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
-  
+
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
-  
+
   testCompile ("com.adaptris:interlok-oauth-azure:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-oauth-gcloud:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-oauth-generic:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-oauth-salesforce:$interlokCoreVersion") {changing= true}
-  
+
   testCompile ("com.adaptris:interlok-mqtt:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xml-security:$interlokCoreVersion") {changing= true}
-  
+
   testCompile ("com.adaptris:interlok-solace:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-webspheremq:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xa-wmq:$interlokCoreVersion") {changing= true}
   testCompile ("com.adaptris:interlok-xa-atomikos:$interlokCoreVersion") {changing= true}
-  
+
   testCompile ("com.adaptris:interlok-jms-sonicmq:$interlokCoreVersion") {changing= true}
   testCompile ("com.aurea:sonic-channel:$sonicVersion")
   testCompile ("com.aurea:sonic-client:$sonicVersion")
   testCompile ("com.aurea:sonic-crypto:$sonicVersion")
   testCompile ("com.aurea:sonic-xa:$sonicVersion")
   testCompile ("com.aurea:sonic-xmessage:$sonicVersion")
-  
+
   testCompile ("com.adaptris:interlok-edi-stream:$interlokCoreVersion") {changing= true}
 
   testCompile  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testCompile  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
   testCompile  ("org.junit.platform:junit-platform-launcher:1.6.2")
-  
+
   testCompile  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
-   
+
   testCompile ("org.mockito:mockito-core:$mockitoVersion")
   testCompile ("org.mockito:mockito-inline:$mockitoVersion")
 
