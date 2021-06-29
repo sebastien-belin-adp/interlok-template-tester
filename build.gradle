@@ -1,6 +1,5 @@
 plugins {
-  id 'java'
-  id 'maven'
+  id 'java-library'
   id 'maven-publish'
   id 'jacoco'
   id 'com.github.spotbugs' version '4.7.1'
@@ -8,15 +7,16 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ?: '4.1-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ?: '4.1-SNAPSHOT'
-  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
-  mavenPublishUrl = project.hasProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.2-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.2-SNAPSHOT'
+  nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
+  mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
-  repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'unknown'
-  repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
-  defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
+  repoUsername = project.findProperty('repoUsername') ?: 'unknown'
+  repoPassword = project.findProperty('repoPassword') ?: 'unknown'
+  defaultNexusRepo = project.findProperty('defaultNexusRepo') ?: 'unknown'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+
   interlokTemplateZipUrl = 'https://github.com/adaptris/interlok-templates/archive/master.zip'
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
@@ -61,19 +61,30 @@ group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
 
-// In this section you declare where to find the dependencies of your project
+// Disable gradle module generation since we probably don't want
+// xxx.module files in your repository.
+tasks.withType(GenerateModuleMetadata) {
+  enabled = false
+}
+
 repositories {
   mavenCentral()
-  maven { url "$defaultNexusRepo" }
+  if (defaultNexusRepo != "unknown") {
+    maven {
+      url "$defaultNexusRepo"
+      allowInsecureProtocol true
+    }
+  }
+
+  maven { url "$nexusBaseUrl/content/groups/public" }
+  maven { url "$nexusBaseUrl/content/groups/interlok" }
   maven {
       credentials {
         username repoUsername
         password repoPassword
       }
       url "$nexusBaseUrl/content/groups/private"
-    }
-  maven { url "$nexusBaseUrl/content/groups/public" }
-  maven { url "$nexusBaseUrl/content/groups/interlok" }
+  }
 }
 
 configurations {
@@ -112,46 +123,46 @@ configurations.all {
 }
 
 dependencies {
-  compile  ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
-  compile  ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
+  implementation  ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
+  implementation  ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
 
-  compile ("org.slf4j:slf4j-api:$slf4jVersion")
+  implementation ("org.slf4j:slf4j-api:$slf4jVersion")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
 
-  testCompile ("com.adaptris:interlok-oauth-azure:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-oauth-gcloud:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-oauth-generic:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-oauth-salesforce:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-oauth-azure:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-oauth-gcloud:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-oauth-generic:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-oauth-salesforce:$interlokCoreVersion") {changing= true}
 
-  testCompile ("com.adaptris:interlok-mqtt:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-xml-security:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-mqtt:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-xml-security:$interlokCoreVersion") {changing= true}
 
-  testCompile ("com.adaptris:interlok-solace:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-webspheremq:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-xa-wmq:$interlokCoreVersion") {changing= true}
-  testCompile ("com.adaptris:interlok-xa-atomikos:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-solace:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-webspheremq:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-xa-wmq:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-xa-atomikos:$interlokCoreVersion") {changing= true}
 
-  testCompile ("com.adaptris:interlok-jms-sonicmq:$interlokCoreVersion") {changing= true}
-  testCompile ("com.aurea:sonic-channel:$sonicVersion")
-  testCompile ("com.aurea:sonic-client:$sonicVersion")
-  testCompile ("com.aurea:sonic-crypto:$sonicVersion")
-  testCompile ("com.aurea:sonic-xa:$sonicVersion")
-  testCompile ("com.aurea:sonic-xmessage:$sonicVersion")
+  testImplementation ("com.adaptris:interlok-jms-sonicmq:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.aurea:sonic-channel:$sonicVersion")
+  testImplementation ("com.aurea:sonic-client:$sonicVersion")
+  testImplementation ("com.aurea:sonic-crypto:$sonicVersion")
+  testImplementation ("com.aurea:sonic-xa:$sonicVersion")
+  testImplementation ("com.aurea:sonic-xmessage:$sonicVersion")
 
-  testCompile ("com.adaptris:interlok-edi-stream:$interlokCoreVersion") {changing= true}
+  testImplementation ("com.adaptris:interlok-edi-stream:$interlokCoreVersion") {changing= true}
 
-  testCompile  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-  testCompile  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
-  testCompile  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-  testCompile  ("org.junit.platform:junit-platform-launcher:1.7.2")
+  testImplementation  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+  testImplementation  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+  testImplementation  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+  testImplementation  ("org.junit.platform:junit-platform-launcher:1.7.2")
 
-  testCompile  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
+  testImplementation  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
 
-  testCompile ("org.mockito:mockito-core:$mockitoVersion")
-  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
+  testImplementation ("org.mockito:mockito-core:$mockitoVersion")
+  testImplementation ("org.mockito:mockito-inline:$mockitoVersion")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 }
