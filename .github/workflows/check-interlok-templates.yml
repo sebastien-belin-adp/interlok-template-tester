@@ -21,3 +21,8 @@ jobs:
           gradle-version: wrapper
       - name: Execute Gradle Check
         run: ./gradlew -Dorg.gradle.console=plain --no-daemon -PverboseTests=true check
+      - name: Notify Teams About Failure and Recovery
+        if: ${{ github.event.secrets.TEAMS_IDN_WH_URL }}
+        uses: interlok-tooling/notify-teams@main
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_IDN_WH_URL }}
