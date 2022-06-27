@@ -21,6 +21,9 @@ jobs:
           gradle-version: wrapper
       - name: Execute Gradle Check
         run: ./gradlew -Dorg.gradle.console=plain --no-daemon -PverboseTests=true check
+        env:
+          ORG_GRADLE_PROJECT_repoUsername: deployment
+          ORG_GRADLE_PROJECT_repoPassword: ${{ secrets.NEXUS_REPO_PASSWORD }}
       - name: Notify Teams About Failure and Recovery
         if: ${{ github.event.secrets.TEAMS_IDN_WH_URL }}
         uses: interlok-tooling/notify-teams@main
