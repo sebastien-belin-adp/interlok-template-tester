@@ -2,13 +2,13 @@ plugins {
   id 'java-library'
   id 'maven-publish'
   id 'jacoco'
-  id 'com.github.spotbugs' version '5.0.12'
+  id 'com.github.spotbugs' version '5.0.13'
   id 'de.undercouch.download' version '5.3.1'
 }
 
 ext {
-  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.6-SNAPSHOT'
-  releaseVersion = project.findProperty('releaseVersion') ?: '4.6-SNAPSHOT'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.9-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.9-SNAPSHOT'
   nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -24,9 +24,9 @@ ext {
   componentName='Interlok Template Tester'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '2.0.3'
+  slf4jVersion = '2.0.6'
   junitJupiterVersion = '5.9.1'
-  mockitoVersion = '4.8.0'
+  mockitoVersion = '4.8.1'
   sonicVersion = '8.5.0'
 }
 
