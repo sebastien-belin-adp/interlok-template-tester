@@ -2,7 +2,7 @@ name: Check Interlok Templates
 
 on:
   schedule:
-    - cron: 0 4 * * * # Daily 3 a.m.
+    - cron: 0 4 * * * # Daily 4 a.m.
 
 jobs:
   check-interlok-templates:
