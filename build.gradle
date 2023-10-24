@@ -2,8 +2,8 @@ plugins {
   id 'java-library'
   id 'maven-publish'
   id 'jacoco'
-  id 'com.github.spotbugs' version '5.0.13'
-  id 'de.undercouch.download' version '5.3.1'
+  id 'com.github.spotbugs' version '5.2.1'
+  id 'de.undercouch.download' version '5.5.0'
 }
 
 ext {
@@ -24,8 +24,8 @@ ext {
   componentName='Interlok Template Tester'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '2.0.6'
-  junitJupiterVersion = '5.9.1'
+  slf4jVersion = '2.0.9'
+  junitJupiterVersion = '5.10.0'
   mockitoVersion = '5.2.0'
   sonicVersion = '8.5.0'
 }
@@ -157,7 +157,7 @@ dependencies {
   testImplementation  ("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
   testImplementation  ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testImplementation  ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-  testImplementation  ("org.junit.platform:junit-platform-launcher:1.9.1")
+  testImplementation  ("org.junit.platform:junit-platform-launcher:1.10.0")
 
   testImplementation  ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
 
