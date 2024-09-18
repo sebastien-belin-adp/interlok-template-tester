@@ -24,7 +24,7 @@ ext {
   componentName='Interlok Template Tester'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '2.0.9'
+  slf4jVersion = '2.0.11'
   junitJupiterVersion = '5.10.0'
   mockitoVersion = '5.2.0'
   sonicVersion = '8.5.0'
